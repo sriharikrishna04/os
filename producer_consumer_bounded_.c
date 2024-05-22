@@ -3,13 +3,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define BUFFER_SIZE 10
-
-
-int buffer[BUFFER_SIZE];
+int BUFFER_SIZE;
+int *buffer;
 int in = 0;  
 int out = 0;  
-int full=0,mutex=1,empty=BUFFER_SIZE;
+int full=0,mutex=1,empty;
 
 void wait(int *s){
     while(*s<=0);
@@ -26,6 +24,7 @@ void produce() {
     
     printf("enter data to produce");
     scanf("%d",&item);
+    if(!(empty<=0)){
     wait(&empty);
     wait(&mutex);
 
@@ -35,14 +34,16 @@ void produce() {
 
     signal(&mutex);
     signal(&full);
-    
+    }else{
+        printf("buffer full\n");
+    }
     
 }
 
 
 void consume() {
     int item;
-   
+   if(!(full<=0)){
     wait(&full);
     wait(&mutex);
 
@@ -52,13 +53,19 @@ void consume() {
 
     signal(&mutex);
     signal(&empty);
+   }else{
+       printf("buffer empty can't consume\n");
+   }
 
     
 }
 
 int main() {
     int c;
-
+    printf("Enter the buffer size:");
+    scanf("%d",&BUFFER_SIZE);
+    empty=BUFFER_SIZE;
+    buffer=(int *)calloc(BUFFER_SIZE,sizeof(int));
     while(1){
         printf("enter choice:\n1.produce\n2.consume\n");
         scanf("%d",&c);
