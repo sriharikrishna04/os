@@ -43,6 +43,7 @@ void produce() {
 void consume() {
     int item;
    
+	if(!(full<=0)){   
     wait(&full);
     wait(&mutex);
 
@@ -51,7 +52,10 @@ void consume() {
     printf("Consumed: %d\n", item);
 
     signal(&mutex);
-
+}
+else{
+	printf("buffer empty\n");
+}
 
     
 }
